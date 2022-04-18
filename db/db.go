@@ -4,9 +4,17 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/boltdb/bolt"
+)
+
+type WordCase int
+
+const (
+	CaseSensitive WordCase = iota
+	CaseInsensitive
 )
 
 var bucketName = []byte("tasks")
@@ -54,6 +62,31 @@ func (d *DB) All() ([]Task, error) {
 				return err
 			}
 			tasks = append(tasks, task)
+		}
+		return nil
+	})
+	return tasks, err
+}
+
+func (d *DB) Search(word string, wordCase WordCase) ([]Task, error) {
+	var tasks []Task
+	err := d.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucketName)
+		c := b.Cursor()
+
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			var task Task
+			if err := json.Unmarshal(v, &task); err != nil {
+				return err
+			}
+			content := task.Value
+			if wordCase == CaseInsensitive {
+				content = strings.ToUpper(task.Value)
+				word = strings.ToUpper(word)
+			}
+			if strings.Contains(content, word) {
+				tasks = append(tasks, task)
+			}
 		}
 		return nil
 	})
