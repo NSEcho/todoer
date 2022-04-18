@@ -33,7 +33,7 @@ var todayCmd = &cobra.Command{
 					completedTasks = append(completedTasks, task)
 				}
 			}
-			helpers.PrintTasks(completedTasks)
+			helpers.PrintTasks(completedTasks, "Completed tasks for today")
 			return nil
 		}
 
@@ -44,11 +44,11 @@ var todayCmd = &cobra.Command{
 					incompletedTasks = append(incompletedTasks, task)
 				}
 			}
-			helpers.PrintTasks(incompletedTasks)
+			helpers.PrintTasks(incompletedTasks, "Incompleted tasks for today")
 			return nil
 		}
 
-		helpers.PrintTasks(tasks)
+		helpers.PrintTasks(tasks, "Tasks for today")
 		return nil
 	},
 }

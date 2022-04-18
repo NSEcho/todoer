@@ -16,7 +16,7 @@ var lsCmd = &cobra.Command{
 			return err
 		}
 
-		helpers.PrintTasks(tasks)
+		helpers.PrintTasks(tasks, "All tasks")
 
 		return nil
 	},
